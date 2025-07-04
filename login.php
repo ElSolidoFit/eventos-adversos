@@ -30,7 +30,7 @@ try {
     $u = $stmt->fetch();
 
     if (!$u)                           exit('❌ Usuario o contraseña incorrectos.');
-    if ($u['estado'] !== 'activo')     exit('🚫 Cuenta inactiva.');
+    if ($u['estado'] !== 'activo')     exit('🚫 Cuenta inactiva..');
     if (!password_verify($clave,$u['clave']))
                                        exit('❌ Usuario o contraseña incorrectos.');
 
