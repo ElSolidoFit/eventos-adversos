@@ -19,7 +19,7 @@ if ($usuario === '' || $clave === '') {
 try {
     $pdo = new PDO(
         'mysql:host=localhost;dbname=eventos_adversos;charset=utf8',
-        'root','1234',
+        'root','ste2012STE',
         [PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,
          PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC]
     );
@@ -43,7 +43,7 @@ try {
     $_SESSION['nombre']= $u['nombre_completo'];
     $_SESSION['estado']= $u['estado'];
 
-    header('Location: index.html');
+    header('Location: home.php');
     exit;
 
 } catch (PDOException $e) {
