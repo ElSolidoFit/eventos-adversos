@@ -1,12 +1,37 @@
-<?php 
-include 'conexion.php'; 
+<?php
+include 'conexion.php';
+
+$buscar = '';
+$resultados = [];
+
+if (isset($_GET['buscar'])) {
+    $buscar = trim($_GET['buscar']);
+    // Prepara consulta con LIKE para buscar en paciente, descripcion y tipo
+    $sql = "SELECT * FROM eventos 
+            WHERE paciente LIKE ? OR descripcion LIKE ? OR tipo LIKE ?
+            ORDER BY id DESC";
+    $param = "%{$buscar}%";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sss", $param, $param, $param);
+    $stmt->execute();
+    $res = $stmt->get_result();
+
+    while ($row = $res->fetch_assoc()) {
+        $resultados[] = $row;
+    }
+
+    $stmt->close();
+} 
+$conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Lista de Eventos</title>
+    <title>Buscar Eventos</title>
 
     <link rel="stylesheet" href="./css/normalize.css" />
     <link rel="stylesheet" href="./css/bootstrap.min.css" />
@@ -42,22 +67,27 @@ include 'conexion.php';
 
         <div class="full-box page-header">
             <h3 class="text-left">
-                <i class="fas fa-clipboard-list fa-fw"></i> &nbsp; LISTA DE EVENTOS
+                <i class="fas fa-search fa-fw"></i> &nbsp; BUSCAR EVENTOS
             </h3>
             <p class="text-justify">
-                A continuación se muestra la lista de eventos adversos registrados en el sistema.
+                Busca eventos adversos por paciente, descripción o tipo.
             </p>
         </div>
 
         <div class="container-fluid">
-            <ul class="full-box list-unstyled page-nav-tabs">
-                <li><a href="client-new.php"><i class="fas fa-plus fa-fw"></i> &nbsp; AGREGAR EVENTO</a></li>
-                <li><a class="active" href="client-list.php"><i class="fas fa-clipboard-list fa-fw"></i> &nbsp; LISTA DE EVENTOS</a></li>
-                <li><a href="client-search.php"><i class="fas fa-search fa-fw"></i> &nbsp; BUSCAR EVENTO</a></li>
-            </ul>
-        </div>
+            <form method="GET" action="client-search.php" class="form-inline mb-3">
+                <input 
+                    type="text" 
+                    name="buscar" 
+                    class="form-control mr-2" 
+                    placeholder="Buscar..." 
+                    value="<?php echo htmlspecialchars($buscar); ?>" 
+                    required
+                />
+                <button type="submit" class="btn btn-primary">Buscar</button>
+                <a href="client-list.php" class="btn btn-secondary ml-2">Volver a la lista</a>
+            </form>
 
-        <div class="container-fluid">
             <div class="table-responsive">
                 <table class="table table-dark table-sm">
                     <thead>
@@ -71,14 +101,11 @@ include 'conexion.php';
                             <th>ELIMINAR</th>
                         </tr>
                     </thead>
-                    <tbody id="tabla-eventos">
+                    <tbody>
                         <?php
-                        $sql = "SELECT * FROM eventos ORDER BY id DESC";
-                        $resultado = $conn->query($sql);
-                        $contador = 1;
-
-                        if ($resultado && $resultado->num_rows > 0) {
-                            while ($row = $resultado->fetch_assoc()) {
+                        if (!empty($resultados)) {
+                            $contador = 1;
+                            foreach ($resultados as $row) {
                                 echo '<tr class="text-center" data-id="' . $row["id"] . '">';
                                 echo '<td>' . $contador++ . '</td>';
                                 echo '<td>' . htmlspecialchars($row["paciente"]) . '</td>';
@@ -89,10 +116,11 @@ include 'conexion.php';
                                 echo '<td><button class="btn btn-warning btn-eliminar" data-id="' . $row["id"] . '"><i class="far fa-trash-alt"></i></button></td>';
                                 echo '</tr>';
                             }
+                        } else if (isset($_GET['buscar'])) {
+                            echo '<tr><td colspan="7" class="text-center">No se encontraron eventos que coincidan.</td></tr>';
                         } else {
-                            echo '<tr><td colspan="7" class="text-center">No hay eventos registrados.</td></tr>';
+                            echo '<tr><td colspan="7" class="text-center">Ingrese un término para buscar eventos.</td></tr>';
                         }
-                        $conn->close();
                         ?>
                     </tbody>
                 </table>
@@ -101,22 +129,20 @@ include 'conexion.php';
     </section>
 </main>
 
-<!-- Scripts -->
 <script src="./js/jquery-3.4.1.min.js"></script>
 <script src="./js/popper.min.js"></script>
 <script src="./js/bootstrap.min.js"></script>
 <script src="./js/jquery.mCustomScrollbar.concat.min.js"></script>
 <script src="./js/bootstrap-material-design.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $('body').bootstrapMaterialDesign();
-    });
+$(document).ready(function() {
+    $('body').bootstrapMaterialDesign();
+});
 </script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const tabla = document.getElementById('tabla-eventos');
-
+    const tabla = document.querySelector('tbody');
     tabla.addEventListener('click', function (e) {
         if (e.target.closest('.btn-eliminar')) {
             const boton = e.target.closest('.btn-eliminar');
@@ -124,8 +150,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const fila = boton.closest('tr');
 
             if (confirm('¿Eliminar evento? Esta acción no se puede deshacer.')) {
-                console.log('Confirmado eliminar, enviando fetch con id:', id);
-
                 fetch('client-delete.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -133,7 +157,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .then(res => res.text())
                 .then(data => {
-                    console.log('Respuesta del servidor:', data);
                     if (data.trim() === 'ok') {
                         alert('¡Eliminado! El evento fue eliminado.');
                         location.reload();
