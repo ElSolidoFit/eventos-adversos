@@ -11,10 +11,10 @@
 					<a href="client-new.php"><i class="fas fa-plus fa-fw"></i> &nbsp; Agregar Eventos Adversos</a>
 				</li>
 				<li>
-					<a href="client-list.html"><i class="fas fa-clipboard-list fa-fw"></i> &nbsp; Listar Eventos</a>
+					<a href="client-list.php"><i class="fas fa-clipboard-list fa-fw"></i> &nbsp; Listar Eventos</a>
 				</li>
 				<li>
-					<a href="client-search.html"><i class="fas fa-search fa-fw"></i> &nbsp; Buscar Evento</a>
+					<a href="client-search.php"><i class="fas fa-search fa-fw"></i> &nbsp; Buscar Evento</a>
 				</li>
 			</ul>
 		</li>
