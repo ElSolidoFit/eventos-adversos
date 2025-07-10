@@ -42,7 +42,7 @@ try {
     $_SESSION['usuario']=$u['usuario'];
     $_SESSION['nombre']= $u['nombre_completo'];
     $_SESSION['estado']= $u['estado'];
-
+    $_SESSION['tipo_usuario'] = $u['id_tipo_usuario'];
     header('Location: home.php');
     exit;
 

@@ -1,37 +1,35 @@
+<?php
+session_start();
+
+// Redirigir si no hay sesión
+if (!isset($_SESSION['usuario'])) {
+	header('Location: login.html');
+	exit;
+}
+
+$nombre_usuario = $_SESSION['nombre'] ?? 'Usuario';
+$tipo_usuario   = $_SESSION['tipo_usuario'] ?? '';
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Home</title>
 
-	<!-- Normalize V8.0.1 -->
+	<!-- Estilos -->
 	<link rel="stylesheet" href="./css/normalize.css">
-
-	<!-- Bootstrap V4.3 -->
 	<link rel="stylesheet" href="./css/bootstrap.min.css">
-
-	<!-- Bootstrap Material Design V4.0 -->
 	<link rel="stylesheet" href="./css/bootstrap-material-design.min.css">
-
-	<!-- Font Awesome V5.9.0 -->
 	<link rel="stylesheet" href="./css/all.css">
-
-	<!-- Sweet Alerts V8.13.0 CSS file -->
 	<link rel="stylesheet" href="./css/sweetalert2.min.css">
-
-	<!-- Sweet Alert V8.13.0 JS file-->
-	<script src="./js/sweetalert2.min.js" ></script>
-
-	<!-- jQuery Custom Content Scroller V3.1.5 -->
 	<link rel="stylesheet" href="./css/jquery.mCustomScrollbar.css">
-	
-	<!-- General Styles -->
 	<link rel="stylesheet" href="./css/style.css">
+
+	<!-- Scripts -->
+	<script src="./js/sweetalert2.min.js"></script>
 </head>
 <body>
-	
-	<!-- Main container -->
 	<main class="full-box main-container">
 		
 		<!-- Nav lateral -->
@@ -42,7 +40,8 @@
 					<i class="far fa-times-circle show-nav-lateral"></i>
 					<img src="./assets/avatar/Avatar.png" class="img-fluid" alt="Avatar">
 					<figcaption class="roboto-medium text-center">
-						Carlos Alfaro <br><small class="roboto-condensed-light">Web Eventos</small>
+						<?php echo htmlspecialchars($nombre_usuario); ?>
+						<br><small class="roboto-condensed-light">Web Eventos</small>
 					</figcaption>
 				</figure>
 				<div class="full-box nav-lateral-bar"></div>
@@ -50,7 +49,7 @@
 			</div>
 		</section>
 
-		<!-- Page content -->
+		<!-- Contenido principal -->
 		<section class="full-box page-content">
 			<nav class="full-box navbar-info">
 				<a href="#" class="float-left show-nav-lateral">
@@ -59,12 +58,12 @@
 				<a href="user-update.php">
 					<i class="fas fa-user-cog"></i>
 				</a>
-				<a href="#" class="btn-exit-system">
+				<a href="logout.php" class="btn-exit-system">
 					<i class="fas fa-power-off"></i>
 				</a>
 			</nav>
 
-			<!-- Page header -->
+			<!-- Encabezado -->
 			<div class="full-box page-header">
 				<h3 class="text-left">
 					<i class="fab fa-dashcube fa-fw"></i> &nbsp; DASHBOARD
@@ -74,7 +73,7 @@
 				</p>
 			</div>
 			
-			<!-- Content -->
+			<!-- Tarjetas -->
 			<div class="full-box tile-container">
 
 				<a href="client-new.php" class="tile">
@@ -85,7 +84,11 @@
 					</div>
 				</a>
 
-				<a href="item-list.php" class="tile">
+				<?php if ($tipo_usuario === '2'): ?>
+				
+				<!--
+				
+					<a href="item-list.php" class="tile">
 					<div class="tile-tittle">Items</div>
 					<div class="tile-icon">
 						<i class="fas fa-pallet fa-fw"></i>
@@ -100,7 +103,7 @@
 						<p>10 Registrados</p>
 					</div>
 				</a>
-
+              -->
 				<a href="user-list.php" class="tile">
 					<div class="tile-tittle">Usuarios</div>
 					<div class="tile-icon">
@@ -109,19 +112,14 @@
 					</div>
 				</a>
 
-				<a href="company.php" class="tile">
-					<div class="tile-tittle">Empresa</div>
-					<div class="tile-icon">
-						<i class="fas fa-store-alt fa-fw"></i>
-						<p>1 Registrada</p>
-					</div>
-				</a>
+				
+				<?php endif; ?>
 				
 			</div>
 		</section>
 	</main>
 	
-	<!-- JavaScript files -->
+	<!-- JS -->
 	<script src="./js/jquery-3.4.1.min.js"></script>
 	<script src="./js/popper.min.js"></script>
 	<script src="./js/bootstrap.min.js"></script>

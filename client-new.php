@@ -121,7 +121,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 								<div class="col-12 col-md-4">
 									<div class="form-group">
 										<label for="responsable" class="bmd-label-floating">Responsable</label>
-										<input type="text" name="responsable" class="form-control" id="responsable" required />
+										<select name="responsable" class="form-control" id="responsable" required>
+	<option value="">Seleccione un responsable</option>
+	<?php
+		$sqlUsuarios = "SELECT usuario FROM usuarios ORDER BY usuario";
+		$resultUsuarios = $conn->query($sqlUsuarios);
+		while ($row = $resultUsuarios->fetch_assoc()) {
+			echo '<option value="' . htmlspecialchars($row["usuario"]) . '">' . htmlspecialchars($row["usuario"]) . '</option>';
+		}
+	?>
+</select>
 									</div>
 								</div>
 								<div class="col-12 col-md-4">
